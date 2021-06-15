@@ -73,13 +73,15 @@ write.csv(PI.Table, file = here("output", "Articles_by_PI.csv"), row.names = F) 
 
 ###BY JOURNAL (plos one throws it, need to cut bar and pool least common)
 
-# Errors, but probably can be fixed with a fct_reorder()?
-OAF <- transform(OAF, Journal.Publication = reorder(Journal.Publication))
+# ERS: This line errors currently.  Probably needs some love from the `forcats` package.
+# OAF <- transform(OAF, Journal.Publication = reorder(Journal.Publication))
 
 
 jrnl.fig <- ggplot(OAF, aes(factor(Journal.Publication)))  #Factor converts the string to a factor, allowing you to count them for the plot
-jrnl.fig<-jrnl.fig + geom_bar()  # By default, uses stat="bin", which gives the count in each category
-jrnl.fig #ERS: x-axis is unreadable
+jrnl.fig <- jrnl.fig +
+  geom_bar() + # By default, uses stat="bin", which gives the count in each category
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) #ERS: not sure this helps much
+jrnl.fig
 
 
 ### BY COLLEGE
@@ -87,7 +89,7 @@ jrnl.fig #ERS: x-axis is unreadable
 # see http://stackoverflow.com/questions/5208679/order-bars-in-ggplot2-bar-graph
 OAF <- within(OAF, College <- factor(College, levels=names(sort(table(College),decreasing=TRUE)))) 
 ## plot
-College.fig<-ggplot(OAF,aes(x=College))+geom_bar(binwidth=1)+    #histogram in ggplot2
+College.fig<-ggplot(OAF,aes(x=College))+geom_bar()+    #histogram in ggplot2
   xlab("College") +                                              #change the X and Y labels
   ylab("N") +
   scale_y_continuous(breaks=seq(0, 65, 5))+                      #change the y axis to go from 0-60 by 5
@@ -108,7 +110,7 @@ OAF <- within(OAF, Publication.Year <- factor(Publication.Year, levels=names(sor
 OAF$Publication.Year<-factor(OAF$Publication.Year)
 OAF$Publication.Year<-ordered(OAF$Publication.Year, levels = c("2010", "2011", "2012", "2013", "2014"))
 
-Year.fig<-ggplot(OAF,aes(x=Publication.Year))+geom_bar(binwidth=1)+    #histogram in ggplot2
+Year.fig<-ggplot(OAF,aes(x=Publication.Year))+geom_bar()+    #histogram in ggplot2
   xlab("Year") +                                              #change the X and Y labels
   ylab("N") +
   scale_y_continuous(breaks=seq(0, 105, 15))+                      #change the y axis to go from 0-60 by 5
