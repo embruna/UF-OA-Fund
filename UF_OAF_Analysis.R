@@ -110,10 +110,12 @@ OAF <- within(OAF, Publication.Year <- factor(Publication.Year, levels=names(sor
 OAF$Publication.Year<-factor(OAF$Publication.Year)
 OAF$Publication.Year<-ordered(OAF$Publication.Year, levels = c("2010", "2011", "2012", "2013", "2014"))
 
-Year.fig<-ggplot(OAF,aes(x=Publication.Year))+geom_bar()+    #histogram in ggplot2
+Year.fig <-
+  ggplot(OAF, aes(x = Publication.Year)) +
+  geom_bar() +    #histogram in ggplot2
   xlab("Year") +                                              #change the X and Y labels
   ylab("N") +
-  scale_y_continuous(breaks=seq(0, 105, 15))+                      #change the y axis to go from 0-60 by 5
+  scale_y_continuous(breaks = seq(0, 105, 15)) +                      #change the y axis to go from 0-60 by 5
   ggtitle("OA Fund Articles: Year of Publication")                     #add a title
 
 Year.fig <-Year.fig + theme_classic()+theme(axis.title.x=element_text(colour="black", size = 18, vjust=-0.5),    #sets x axis title size, style, distance from axis #add , face = "bold" if you want bold
