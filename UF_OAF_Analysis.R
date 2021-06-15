@@ -3,6 +3,7 @@ library(tidyr)
 library(ggplot2)
 library(reshape2)
 library(here)
+library(readr)
 
 # setwd("/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund")
 
@@ -16,7 +17,7 @@ library(here)
 ######################################################
 #Step 1: load the CSV file and save as dataframes
 
-OAF <- read.csv("UFOAFData_EB.csv", dec=".", header = TRUE, sep = ",", check.names=FALSE, stringsAsFactors=FALSE) #need to save strings so tha you can error correct (ERS: this is now default behavior as of a recent R version)
+OAF <- read_csv("UFOAFData_EB.csv")
 #Make some corrections to the data
 OAF$College[OAF$Last.Name == "Emery"]  <- "FLMNH" #K. Emery  is in FLMNH, College was incorrectly ccoded as CLAS
 OAF$Department[OAF$Last.Name == "Rey"]  <- "EntNemat" #FMEL is the lab in the department
