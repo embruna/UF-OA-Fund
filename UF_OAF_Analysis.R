@@ -66,9 +66,6 @@ names(PI.Table)[names(PI.Table)=="n"] <- "N" #rename the column so it looks nice
 write.csv(PI.Table, file = here("output", "Articles_by_PI.csv"), row.names = F) #export it as a csv file
 
 
-
-
-
 #FIGURES
 
 ###BY JOURNAL (plos one throws it, need to cut bar and pool least common)
@@ -89,7 +86,7 @@ jrnl.fig
 # see http://stackoverflow.com/questions/5208679/order-bars-in-ggplot2-bar-graph
 OAF <- within(OAF, College <- factor(College, levels=names(sort(table(College),decreasing=TRUE)))) 
 ## plot
-College.fig<-ggplot(OAF,aes(x=College))+geom_bar()+    #histogram in ggplot2
+College.fig<-ggplot(OAF,aes(x=College)) + geom_bar()+    #histogram in ggplot2
   xlab("College") +                                              #change the X and Y labels
   ylab("N") +
   scale_y_continuous(breaks=seq(0, 65, 5))+                      #change the y axis to go from 0-60 by 5
