@@ -2,12 +2,12 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(reshape2)
+library(here)
 
-
-setwd("/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund")
+# setwd("/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund")
 
 #Clear out everything from the environment
-rm(list=ls())
+# rm(list=ls())
 
 ######################################################
 ######################################################
@@ -16,7 +16,7 @@ rm(list=ls())
 ######################################################
 #Step 1: load the CSV file and save as dataframes
 
-OAF<-read.csv("UFOAFData_EB.csv", dec=".", header = TRUE, sep = ",", check.names=FALSE, stringsAsFactors=FALSE) #need to save strings so tha you can error correct
+OAF <- read.csv("UFOAFData_EB.csv", dec=".", header = TRUE, sep = ",", check.names=FALSE, stringsAsFactors=FALSE) #need to save strings so tha you can error correct
 #Make some corrections to the data
 OAF$College[OAF$Last.Name == "Emery"]  <- "FLMNH" #K. Emery  is in FLMNH, College was incorrectly ccoded as CLAS
 OAF$Department[OAF$Last.Name == "Rey"]  <- "EntNemat" #FMEL is the lab in the department
@@ -33,7 +33,7 @@ Journal.Table <- Journal.Table[order(-Journal.Table$n),] #sort this from highest
 Journal.Table$Percent <- Journal.Table$n/sum(Journal.Table$n)*100 #add a column with the percentage
 names(Journal.Table)[names(Journal.Table)=="Journal.Publication"] <- "Journal" #rename the column so it looks nicer in the table
 names(Journal.Table)[names(Journal.Table)=="n"] <- "N" #rename the column so it looks nicer in the table
-write.csv(Journal.Table, file="/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund/Articles_by_Journal.csv", row.names = F) #export it as a csv file
+write.csv(Journal.Table, file = here("output", "Articles_by_Journal.csv"), row.names = F) #export it as a csv file
 
 
 #COLLEGE STATS
@@ -42,7 +42,7 @@ College.Table<-as.data.frame(count(OAF,College))
 College.Table <- College.Table[order(-College.Table$n),] 
 College.Table$Percent <- College.Table$n/sum(College.Table$n)*100
 names(College.Table)[names(College.Table)=="n"] <- "N" #rename the column so it looks nicer in the table
-write.csv(College.Table, file="/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund/Articles_by_College.csv", row.names = F) #export it as a csv file
+write.csv(College.Table, file=here("output", "Articles_by_College.csv"), row.names = F) #export it as a csv file
 
 
 #DEPARTMENT STATS
@@ -51,7 +51,7 @@ Department.Table<-as.data.frame(count(OAF,Department))
 Department.Table <- Department.Table[order(-Department.Table$n),] 
 Department.Table$Percent <- Department.Table$n/sum(Department.Table$n)*100
 names(Department.Table)[names(Department.Table)=="n"] <- "N" #rename the column so it looks nicer in the table
-write.csv(Department.Table, file="/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund/Articles_by_Department.csv", row.names = F) #export it as a csv file
+write.csv(Department.Table, file = here("output", "Articles_by_Department.csv"), row.names = F) #export it as a csv file
 
 
 #PI STATS
@@ -60,7 +60,7 @@ PI.Table<-as.data.frame(count(OAF,Last.Name, First.Name, College, Department))
 PI.Table <- PI.Table[order(-PI.Table$n),] 
 PI.Table$Percent <- PI.Table$n/sum(PI.Table$n)*100
 names(PI.Table)[names(PI.Table)=="n"] <- "N" #rename the column so it looks nicer in the table
-write.csv(PI.Table, file="/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Access Fund/Articles_by_PI.csv", row.names = F) #export it as a csv file
+write.csv(PI.Table, file = here("output", "Articles_by_PI.csv"), row.names = F) #export it as a csv file
 
 
 
@@ -69,10 +69,14 @@ write.csv(PI.Table, file="/Users/emiliobruna/Dropbox/SHARED FOLDERS/UF Open Acce
 #FIGURES
 
 ###BY JOURNAL (plos one throws it, need to cut bar and pool least common)
+
+# Errors, but probably can be fixed with a fct_reorder()?
 OAF <- transform(OAF, Journal.Publication = reorder(Journal.Publication))
+
+
 jrnl.fig <- ggplot(OAF, aes(factor(Journal.Publication)))  #Factor converts the string to a factor, allowing you to count them for the plot
 jrnl.fig<-jrnl.fig + geom_bar()  # By default, uses stat="bin", which gives the count in each category
-jrnl.fig
+jrnl.fig #ERS: x-axis is unreadable
 
 
 ### BY COLLEGE
@@ -92,7 +96,7 @@ College.fig<-ggplot(OAF,aes(x=College))+geom_bar(binwidth=1)+    #histogram in g
                                               plot.title = element_text(colour="black", size = 22, vjust = -1),         #changes size, font, location of title
                                               axis.text.x=element_text(angle = -45, hjust = 0))                         #sets angle of labels on the axes to diagonal
 College.fig
-ggsave("Figure-Publications_by_College.pdf")
+ggsave(here("output", "Figure-Publications_by_College.pdf"))
 
 ### BY YEAR
 # change year to ordered factor
@@ -113,5 +117,5 @@ Year.fig <-Year.fig + theme_classic()+theme(axis.title.x=element_text(colour="bl
                                                   plot.title = element_text(colour="black", size = 22, vjust = -1),         #changes size, font, location of title
                                                   axis.text.x=element_text(angle = -45, hjust = 0))                         #sets angle of labels on the axes to diagonal
 Year.fig
-ggsave("Figure-Publications_by_Year.pdf")
+ggsave(here("output", "Figure-Publications_by_Year.pdf"))
 
