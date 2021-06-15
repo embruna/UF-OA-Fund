@@ -16,19 +16,19 @@ library(here)
 ######################################################
 #Step 1: load the CSV file and save as dataframes
 
-OAF <- read.csv("UFOAFData_EB.csv", dec=".", header = TRUE, sep = ",", check.names=FALSE, stringsAsFactors=FALSE) #need to save strings so tha you can error correct
+OAF <- read.csv("UFOAFData_EB.csv", dec=".", header = TRUE, sep = ",", check.names=FALSE, stringsAsFactors=FALSE) #need to save strings so tha you can error correct (ERS: this is now default behavior as of a recent R version)
 #Make some corrections to the data
 OAF$College[OAF$Last.Name == "Emery"]  <- "FLMNH" #K. Emery  is in FLMNH, College was incorrectly ccoded as CLAS
 OAF$Department[OAF$Last.Name == "Rey"]  <- "EntNemat" #FMEL is the lab in the department
 OAF$Journal.Publication[OAF$Journal.Publication == "Frontiers in Plant Proteomics" & OAF$First.Name == "Annalisa"]<- "Frontiers in Plant Science"  #Was published in a diferent journal than in database
 str(OAF)
 OAF <- data.frame(OAF, stringsAsFactors=FALSE)  #Convert strings back to factors to be able to plot
-
+#ERS: I don't think that's what this does...
 
 
 #JOURNAL STATS
-Journal.Count<-n_distinct(OAF$Journal.Publication) #count how many different journals
-Journal.Table<-as.data.frame(count(OAF,Journal.Publication)) #creata a dataframe with the count of how many in each journal and and rename it
+Journal.Count <- n_distinct(OAF$Journal.Publication) #count how many different journals
+Journal.Table <- as.data.frame(count(OAF,Journal.Publication)) #creata a dataframe with the count of how many in each journal and and rename it
 Journal.Table <- Journal.Table[order(-Journal.Table$n),] #sort this from highest to lowest
 Journal.Table$Percent <- Journal.Table$n/sum(Journal.Table$n)*100 #add a column with the percentage
 names(Journal.Table)[names(Journal.Table)=="Journal.Publication"] <- "Journal" #rename the column so it looks nicer in the table
@@ -37,6 +37,7 @@ write.csv(Journal.Table, file = here("output", "Articles_by_Journal.csv"), row.n
 
 
 #COLLEGE STATS
+# Same as above, but for colleges
 College.Count<-n_distinct(OAF$College)
 College.Table<-as.data.frame(count(OAF,College))
 College.Table <- College.Table[order(-College.Table$n),] 
@@ -46,6 +47,7 @@ write.csv(College.Table, file=here("output", "Articles_by_College.csv"), row.nam
 
 
 #DEPARTMENT STATS
+# Same but for departments
 Department.Count<-n_distinct(OAF$Department)
 Department.Table<-as.data.frame(count(OAF,Department))
 Department.Table <- Department.Table[order(-Department.Table$n),] 
@@ -55,6 +57,7 @@ write.csv(Department.Table, file = here("output", "Articles_by_Department.csv"),
 
 
 #PI STATS
+#Same but for PIs
 PI.Count<-n_distinct(OAF$Last.Name)
 PI.Table<-as.data.frame(count(OAF,Last.Name, First.Name, College, Department))
 PI.Table <- PI.Table[order(-PI.Table$n),] 
